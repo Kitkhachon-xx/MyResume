@@ -1,0 +1,69 @@
+body{
+    margin: 0;
+}
+
+
+.header-content{
+    background-color: #cecece;
+    text-align: center;
+    padding: 10px 0;
+    display: block;
+}
+
+.Resume-Header{
+    margin: 0;
+    font-size: 32px;
+    font-family: Arial, sans-serif;
+    color: rgb(0, 0, 0);
+    width: 100%;
+}
+
+.IntroducProfile{
+    margin: 50px 0;
+}
+
+.profile-IMG-TD{
+    padding-left:10%;
+    width: auto;
+    margin-left:30%;
+
+}
+
+.profile-pic{
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    display: inline;
+
+}
+
+.profile-IMG{
+    border-radius:50% ;
+    
+}
+
+.Intro-Details{
+    padding-left:20% ;
+    width: 100%;
+    vertical-align: top;
+    margin-left:30%;
+}
+
+.Intro-text{
+    font-size: 18px;
+    color: #333;
+    margin-top: 15px;
+    display: inline;
+}
+
+.PIMLINK{
+    text-decoration: none;
+    color: rgb(0, 0, 0);
+}
+
+.PIMLINK:hover{
+    text-decoration: underline;
+    color: #000cee;
+    background-color: aquamarine;
+}
