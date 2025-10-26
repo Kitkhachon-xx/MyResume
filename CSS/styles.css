@@ -10,6 +10,11 @@ body{
     display: block;
 }
 
+.nav-bar{
+    margin-top: 10px;
+    
+}
+
 .Resume-Header{
     margin: 0;
     font-size: 32px;
@@ -66,4 +71,79 @@ body{
     text-decoration: underline;
     color: #000cee;
     background-color: aquamarine;
+}
+
+.Line{
+    border: none;
+    height: 2px;
+    background-color: #000;
+    margin: 20px 0;
+    width: 100%;
+}
+
+.REBody{
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.AboutMe-Title {
+    font-size: 24px;
+    color: #000;
+    margin-left: 5%;
+    font:bold;
+}
+
+.AboutMe-Body {
+    font-size: 18px;
+    color: #333;
+    margin: 10px 5%;
+}
+
+.Education-Title {
+    font-size: 24px;
+    color: #000;
+    margin-left: 5%;
+    font:bold;
+}
+
+.Skills-Title {
+    font-size: 24px;
+    color: #000;
+    margin-left: 5%;
+    font:bold;
+}
+
+.Education-Section {
+    margin-left:7%;
+    height: auto;
+    width: auto;
+}
+
+.Education-Head {
+    font-size: 20px;
+    color: #000;
+    font:bold;
+}
+
+.Education-Body {
+    font-size: 18px;
+    color: #333;
+    margin-top: 5px;
+}
+
+.Skills-Section {
+    margin-left:7%;
+    height: auto;
+    width: auto;
+}
+
+.TechnicalSkill{
+    font-size: 20px;
+    color: #000;
+    font:bold;
+}
+
+.Skills-Body {
+    font-size: 18px;
+    color: #333;
+    margin-top: 5px;
 }
