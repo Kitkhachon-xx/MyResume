@@ -5,36 +5,47 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Resume</title>
+    <link rel = "icon" href="ICON/applicant.png" type="image/x-icon">
     <link rel="stylesheet" href="CSS/styles.css">
+    <title>Bootstrap demo</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
 </head>
 
 <body>
     <Header>
-        <div class="header-content">
-            <h1 class="Resume-Header">Resume</h1>
-            <nav class="nav-bar">
-                <a href="#AboutMe-Title" class="nav-link">About Me</a>
-                <a href="#Education-Title" class="nav-link">Education</a>
-                <a href="#Skills-Title" class="nav-link">Skills</a>
-        </div>
+        <nav id="navbar-example2" class="navbar navbar-light px-4"
+            style="background-color: rgb(255, 250, 194); position: fixed; top: 0; left: 0; right: 0; font-size: 18px; z-index: 1000;">
+            <a class="navbar-brand" href="index.html">Resume</a>
+            <ul class="nav nav-pills">
+                <li class="nav-item">
+                    <a class="nav-link" href="#about">AboutMe</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#education">Education</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#skills">Skills</a>
+            </ul>
+        </nav>
         <div class="IntroducProfile">
             <table>
                 <tr>
                     <td class="profile-IMG-TD">
                         <div class="Profile-Pic">
-                            <img class="profile-IMG" src="IMG/6752300216.jpg" alt="Profile Picture" class="Profile-Pic">
+                            <img class="profile-IMG profile-pic" src="IMG/6752300216.jpg" alt="Profile Picture">
                         </div>
                     </td>
 
 
                     <td class="Intro-Details">
                         <div class="Intro-Text">
-                            <h1 class="Name-Title">Name : Kitkhachon Chirawongrungrueang</h2>
-                                <p class="ID-Title">ID : 6752300216</p>
-                                <p class="Major-Title">Major : Computer Engineering And Artificial Intelligent</p>
-                                <p class="Faculty-Title">Faculty : Engineering And Technology</p>
-                                <a class="PIMLINK" href="http://pim.ac.th">University : Panyapiwat Institute of
-                                    Management</a>
+                            <h1 class="Name-Title"><b>Name :</b> Kitkhachon Chirawongrungrueang</h1>
+                            <p class="ID-Title"><b>ID :</b> 6752300216</p>
+                            <p class="Major-Title"><b>Major :</b> Computer Engineering And Artificial Intelligent</p>
+                            <p class="Faculty-Title"><b>Faculty :</b> Engineering And Technology</p>
+                            <a class="PIMLINK" href="http://pim.ac.th"><b>University :</b> Panyapiwat Institute of
+                                Management </a>
                         </div>
                     </td>
                 </tr>
@@ -42,64 +53,95 @@
         </div>
     </Header>
     <hr class="Line">
-    <section Calss="REBody">
-        <div>
-            <h2 class="AboutMe-Title">About Me</h2>
-            <p class="AboutMe-Body">I'm Studying in Panyapiwat Institute of Management Computer Engineering And
-                Artificial And I will become to trainee for seeking opportunities for internships and to further develop
-                skills as a Developer by creating and enhancing programs that address customer requirements, as well as
-                performing optimization in Machine Learning for data forecasting.</p>
-        </div>
+    <section class="REBody">
+        <div data-bs-spy="scroll" data-bs-target="#navbar-example2" data-bs-offset="0" class="scrollspy-example"
+            tabindex="0">
+            <div class = "AboutMe-Section">
+                <h2 id="about" class="AboutMe-Title">ABOUT ME</h2>
+                <p class="Address"><b>Address</b> <img class = "ICN" src="ICON/gps.png" alt="Location Icon"> : 123 Main St, Anytown, USA</p>
+                <p class="Email"><b>Email</b> <img class = "ICN" src="ICON/email.png" alt="Email Icon"> : kitkhachon@xxx.com</p>
+                <p class="Phone"><b>Phone</b> <img class = "ICN" src="ICON/phone-call.png" alt="Phone Icon"> : 083-xxx-xxxx</p>
+               <a class="Git-Link" href="https://github.com/Kitkhachon-xx" target="_blank"><b>Git Hub</b> <img  class = "ICN" src="ICON/github.png" alt="GitHub Icon"> :  Kitkhachon Chirawongrungrueang (Kitkhachon-xx)</a>
+                <p class="FAVSUBJECT"><b>Favorite Subjects</b> <img class = "ICN" src="ICON/learning.png" alt="Favorite Subject Icon"> : Artificial Intelligence, Object-Oriented Programming, Data Base, Fundamentals for Programming</p>
+                <p class="HOBBIES"><b>Hobbies</b> <img class = "ICN" src="ICON/hobbies.png" alt="Hobbies Icon"> : Reading Novel, Learning Machine Learning and Deep Learning from Scikit-learn, Playing Video Games, Listening to Music</p>
+                <p class="AboutMe-Body"><b>About Me</b> <img class = "ICN" src="ICON/resume.png" alt="Profile Icon"> : I'm Kitkhachon Chirawongrungrueang. In High School I study in
+                    the Science-Mathematics Program from Songphinong Witthaya School with GPA 3.86.And now I'm Studying
+                    in Panyapiwat Institute of Management Computer Engineering And
+                    Artificial And I will become to trainee for seeking opportunities for internships and to further
+                    develop
+                    skills as a Developer by creating and enhancing programs that address customer requirements, as well
+                    as
+                    performing optimization in Machine Learning for data Prediction.</p>
+            </div>
 
-        <hr class="Line">
+            <hr class="Line">
 
-        <div>
-            <h2 class="Education-Title">Education</h2>
+            <div>
+                <h2 id="education" class="Education-Title">EDUCATION</h2>
 
-            <div class = "Education-Section">
-                <p class="Education-Head">Bachelor's Degree</p>
-                <ul class="Education-Body">
-                    <li>Faculty : Engineering And Technology</li>
-                    <li>Major : Computer Engineering And Artificial Intelligent </li>
-                    <li>Panyapiwat Institute of Management</li>
-                    <li>TimeLine : 2024 - Present</li>
-                    <li>GPA : 3.95</li>
-                </ul>
+                <div class="Education-Section">
+                    <p class="Education-Head">Bachelor's Degree</p>
+                    <ul class="Education-Body">
+                        <li>Faculty : Engineering And Technology</li>
+                        <li>Major : Computer Engineering And Artificial Intelligent </li>
+                        <li>Panyapiwat Institute of Management</li>
+                        <li>TimeLine : 2024 - Present</li>
+                        <li>GPA : 3.95</li>
+                    </ul>
 
-                <p class="Education-Head">Senior High School</p>
-                <ul class="Education-Body">
-                    <li>Science-Mathematics Program</li>
-                    <li>Songphinong Witthaya School</li>
-                    <li>TimeLine : 2021 - 2023</li>
-                    <li>GPA : 3.85</li>
-                </ul>
+                    <p class="Education-Head">Senior High School</p>
+                    <ul class="Education-Body">
+                        <li>Science-Mathematics Program</li>
+                        <li>Songphinong Witthaya School</li>
+                        <li>TimeLine : 2021 - 2023</li>
+                        <li>GPA : 3.85</li>
+                    </ul>
+
+                </div>
 
             </div>
 
-        </div>
+            <hr class="Line">
 
-        <hr class="Line">
-
-        <div>
-            <h2 class="Skills-Title">Skills</h2>
+            <div>
+                <h2 id="skills" class="Skills-Title">SKILLS</h2>
                 <div class="Skills-Section">
-                    <p class = "TechnicalSkill">Technical Skill</p>
+                    <p class="TechnicalSkill">Technical Skill</p>
                     <ul class="Skills-Body">
                         <li>Programming Languages: Python, Java, </li>
-                        <li>Web Development: HTML, CSS</li>
+                        <li>Web Development: HTML, CSS, Bootstrap 5</li>
                         <li>Machine Learning: Optimization Algorithms</li>
                         <li>Database Management: MySQL</li>
                         <li>Version Control: Git, GitHub</li>
                 </div>
+            </div>
         </div>
-
         <hr class="Line">
 
+        <div>
+            <h2 class="Projects-Title">PROJECTS</h2>
+            <div class="Projects-Section">
+                <p class="Project-Head">Machine Learning Optimization</p>
+                <ul class="Project-Body">
+                    <li>Worked on optimizing machine learning algorithms for data forecasting using Python libraries
+                        such as NumPy , Pandas and Matplotlib.</li>
+                    <li>Implemented data preprocessing techniques such as normalization to manage data in dataset for
+                        better training.</li>
+                    <li>Improved model accuracy by tuning hyperparameters with Gradient Descent Algorithm for find
+                        minimum error value with learning rate .</li>
+                    <li>Result of error rate is 0.00068 with optimization 800 epochs.</li>
+                </ul>
+            </div>
     </section>
 
-    <footer>
-
+    <footer class="bg-body-tertiary text-center text-lg-start">
+        <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.05);">
+            @ 2025 Project :
+            <a class="text-body" href="https://github.com/Kitkhachon-xx/MyResume.git">My Resume</a>
+        </div>
     </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>

@@ -3,26 +3,6 @@ body{
 }
 
 
-.header-content{
-    background-color: #cecece;
-    text-align: center;
-    padding: 10px 0;
-    display: block;
-}
-
-.nav-bar{
-    margin-top: 10px;
-    
-}
-
-.Resume-Header{
-    margin: 0;
-    font-size: 32px;
-    font-family: Arial, sans-serif;
-    color: rgb(0, 0, 0);
-    width: 100%;
-}
-
 .IntroducProfile{
     margin: 50px 0;
 }
@@ -44,41 +24,103 @@ body{
 }
 
 .profile-IMG{
-    border-radius:50% ;
+    border-radius:50%;
+    width: 200px;
+    height: 200px;
     
 }
 
 .Intro-Details{
-    padding-left:20% ;
+    padding-left:15% ;
     width: 100%;
     vertical-align: top;
     margin-left:30%;
+    padding-top: 30px;
 }
 
 .Intro-text{
-    font-size: 18px;
+    font-size: 20px;
     color: #333;
     margin-top: 15px;
     display: inline;
 }
 
+.ID-Title{
+    font-size: 24px;
+    color: #000;
+    margin-bottom: 5px;
+    display: block;
+}
+
+.Major-Title{
+    font-size: 24px;
+    color: #000;
+    margin-bottom: 5px;
+    display: block;
+}
+
+.Faculty-Title{
+    font-size: 24px;
+    color: #000;
+    margin-bottom: 5px;
+    display: block;
+}
+
+
+.navbar-brand{
+    width: 100px;
+    text-align: center;
+}
+.navbar-brand:hover{
+    background-color: rgba(255, 0, 0, 0.903);
+    border-radius:15%;
+    width: 100px;
+    text-align: center;
+}
+
 .PIMLINK{
     text-decoration: none;
     color: rgb(0, 0, 0);
+    display: block;
+    width: 43%;
+    margin-bottom: 15px;
+    font-size: 24px;
 }
 
 .PIMLINK:hover{
     text-decoration: underline;
+    color: #001eff;
+    font-size: 28px;
+    
+}
+
+.Git-Link{
+    text-decoration: none;
+    color: rgb(0, 0, 0);
+    display: block;
+    width: 35%;
+    margin-bottom: 15px;
+    margin-left: 7% ;
+    font-size: 18px;
+}
+
+.Git-Link:hover{
+    text-decoration: underline;
     color: #000cee;
-    background-color: aquamarine;
+    font-size: 22px;
 }
 
 .Line{
     border: none;
     height: 2px;
     background-color: #000;
-    margin: 20px 0;
+    margin-top: 60px;
+    margin-bottom: 60px;
     width: 100%;
+}
+
+.AboutMe-Section{
+    line-height: 1.8;
 }
 
 .REBody{
@@ -86,30 +128,62 @@ body{
 }
 
 .AboutMe-Title {
-    font-size: 24px;
+    font-size: 30px;
     color: #000;
     margin-left: 5%;
     font:bold;
+    margin-bottom: 20px;
+}
+.Address{
+    font-size: 18px;
+    color: #333;
+    margin: 10px 7%;
+}
+
+.FAVSUBJECT{
+    font-size: 18px;
+    color: #333;
+    margin: 10px 7%;
+}
+
+.HOBBIES{
+    font-size: 18px;
+    color: #333;
+    margin: 10px 7%;
 }
 
 .AboutMe-Body {
     font-size: 18px;
     color: #333;
-    margin: 10px 5%;
+    margin: 10px 7%;
+}
+
+.Email{
+    font-size: 18px;
+    color: #333;
+    margin: 10px 7%;
+}
+
+.Phone{
+    font-size: 18px;
+    color: #333;
+    margin: 10px 7%;
 }
 
 .Education-Title {
-    font-size: 24px;
+    font-size: 30px;
     color: #000;
     margin-left: 5%;
     font:bold;
+    margin-bottom: 20px;
 }
 
 .Skills-Title {
-    font-size: 24px;
+    font-size: 30px;
     color: #000;
     margin-left: 5%;
     font:bold;
+    margin-bottom: 20px;
 }
 
 .Education-Section {
@@ -119,7 +193,7 @@ body{
 }
 
 .Education-Head {
-    font-size: 20px;
+    font-size: 24px;
     color: #000;
     font:bold;
 }
@@ -137,7 +211,7 @@ body{
 }
 
 .TechnicalSkill{
-    font-size: 20px;
+    font-size: 24px;
     color: #000;
     font:bold;
 }
@@ -146,4 +220,51 @@ body{
     font-size: 18px;
     color: #333;
     margin-top: 5px;
+}
+
+.Projects-Title {
+    font-size: 30px;
+    color: #000;
+    margin-left: 5%;
+    font:bold;
+    margin-bottom: 20px;
+}
+
+.Projects-Section {
+    margin-left:7%;
+    height: auto;
+    width: auto;
+    margin-bottom: 60px;
+}
+
+.Project-Head {
+    font-size: 24px;
+    color: #000;
+    font:bold;
+}
+.container{
+    background-color: #a09797;
+    width: auto;
+    padding: 2% 0;
+    width: 100%;
+}
+
+.Project-Body {
+    font-size: 18px;
+    color: #333;
+    margin-top: 5px;
+}
+.nav-link{
+    transition: all 0.2s;
+}   
+.nav-link:hover{
+    /* text-decoration: underline; */
+    border-bottom:4px solid rgb(177, 189, 209) ;
+}
+
+.ICN{
+    width:25px;
+    height:25px;
+    margin-right:8px;
+    vertical-align: middle;
 }
