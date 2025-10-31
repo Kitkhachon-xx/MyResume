@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Resume</title>
-    <link rel = "icon" href="ICON/applicant.png" type="image/x-icon">
+    <link rel="icon" href="ICON/applicant.png" type="image/x-icon">
     <link rel="stylesheet" href="CSS/styles.css">
     <title>Bootstrap demo</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
@@ -16,16 +16,20 @@
     <Header>
         <nav id="navbar-example2" class="navbar navbar-light px-4"
             style="background-color: rgb(255, 250, 194); position: fixed; top: 0; left: 0; right: 0; font-size: 18px; z-index: 1000;">
-            <a class="navbar-brand" href="index.html">Resume</a>
+            <a class="navbar-pills" href="index.html">Resume</a>
             <ul class="nav nav-pills">
                 <li class="nav-item">
-                    <a class="nav-link" href="#about">AboutMe</a>
+                    <a class="nav-link" href="#AboutMe-Section">AboutMe</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#education">Education</a>
+                    <a class="nav-link" href="#Education-Section">Education</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#skills">Skills</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#Projects-Section">Projects</a>
+                </li>
             </ul>
         </nav>
         <div class="IntroducProfile">
@@ -40,7 +44,7 @@
 
                     <td class="Intro-Details">
                         <div class="Intro-Text">
-                            <h1 class="Name-Title"><b>Name :</b> Kitkhachon Chirawongrungrueang</h1>
+                            <h1 class="Name-Title"><b>Name :</b> KITKHACHON CHIRAWONGRUNGRUEANG</h1>
                             <p class="ID-Title"><b>ID :</b> 6752300216</p>
                             <p class="Major-Title"><b>Major :</b> Computer Engineering And Artificial Intelligent</p>
                             <p class="Faculty-Title"><b>Faculty :</b> Engineering And Technology</p>
@@ -56,15 +60,25 @@
     <section class="REBody">
         <div data-bs-spy="scroll" data-bs-target="#navbar-example2" data-bs-offset="0" class="scrollspy-example"
             tabindex="0">
-            <div class = "AboutMe-Section">
+            <div id="AboutMe-Section" class="AboutMe-Section">
                 <h2 id="about" class="AboutMe-Title">ABOUT ME</h2>
-                <p class="Address"><b>Address</b> <img class = "ICN" src="ICON/gps.png" alt="Location Icon"> : 123 Main St, Anytown, USA</p>
-                <p class="Email"><b>Email</b> <img class = "ICN" src="ICON/email.png" alt="Email Icon"> : kitkhachon@xxx.com</p>
-                <p class="Phone"><b>Phone</b> <img class = "ICN" src="ICON/phone-call.png" alt="Phone Icon"> : 083-xxx-xxxx</p>
-               <a class="Git-Link" href="https://github.com/Kitkhachon-xx" target="_blank"><b>Git Hub</b> <img  class = "ICN" src="ICON/github.png" alt="GitHub Icon"> :  Kitkhachon Chirawongrungrueang (Kitkhachon-xx)</a>
-                <p class="FAVSUBJECT"><b>Favorite Subjects</b> <img class = "ICN" src="ICON/learning.png" alt="Favorite Subject Icon"> : Artificial Intelligence, Object-Oriented Programming, Data Base, Fundamentals for Programming</p>
-                <p class="HOBBIES"><b>Hobbies</b> <img class = "ICN" src="ICON/hobbies.png" alt="Hobbies Icon"> : Reading Novel, Learning Machine Learning and Deep Learning from Scikit-learn, Playing Video Games, Listening to Music</p>
-                <p class="AboutMe-Body"><b>About Me</b> <img class = "ICN" src="ICON/resume.png" alt="Profile Icon"> : I'm Kitkhachon Chirawongrungrueang. In High School I study in
+                <p class="Address"><b>Address</b> <img class="ICN" src="ICON/gps.png" alt="Location Icon"> : 123 Main
+                    St, Anytown, USA</p>
+                <p class="Email"><b>Email</b> <img class="ICN" src="ICON/email.png" alt="Email Icon"> :
+                    kitkhachonchi <img class="ICN" src="ICON/threads.png">xxxx.com</p>
+                <p class="Phone"><b>Phone</b> <img class="ICN" src="ICON/phone-call.png" alt="Phone Icon"> :
+                    083-xxx-xxxx</p>
+                <a class="Git-Link" href="https://github.com/Kitkhachon-xx" target="_blank"><b>Git Hub</b> <img
+                        class="ICN" src="ICON/github.png" alt="GitHub Icon"> : Kitkhachon Chirawongrungrueang
+                    (Kitkhachon-xx)</a>
+                <p class="FAVSUBJECT"><b>Favorite Subjects</b> <img class="ICN" src="ICON/learning.png"
+                        alt="Favorite Subject Icon"> : Artificial Intelligence, Object-Oriented Programming, Data Base,
+                    Fundamentals for Programming</p>
+                <p class="HOBBIES"><b>Hobbies</b> <img class="ICN" src="ICON/hobbies.png" alt="Hobbies Icon"> : Reading
+                    Novel, Learning Machine Learning and Deep Learning from Scikit-learn, Playing Video Games, Listening
+                    to Music</p>
+                <p class="AboutMe-Body"><b>Profile</b> <img class="ICN" src="ICON/resume.png" alt="Profile Icon"> : I'm
+                    Kitkhachon Chirawongrungrueang. In High School I study in
                     the Science-Mathematics Program from Songphinong Witthaya School with GPA 3.86.And now I'm Studying
                     in Panyapiwat Institute of Management Computer Engineering And
                     Artificial And I will become to trainee for seeking opportunities for internships and to further
@@ -76,52 +90,52 @@
 
             <hr class="Line">
 
-            <div>
+            <div id="Education-Section" class="Education-Section">
                 <h2 id="education" class="Education-Title">EDUCATION</h2>
+                <p class="Education-Head">Bachelor's Degree</p>
+                <ul class="Education-Body">
+                    <li>Faculty : Engineering And Technology</li>
+                    <li>Major : Computer Engineering And Artificial Intelligent </li>
+                    <li>Panyapiwat Institute of Management</li>
+                    <li>TimeLine : 2024 - Present</li>
+                    <li>GPA : 3.95</li>
+                </ul>
 
-                <div class="Education-Section">
-                    <p class="Education-Head">Bachelor's Degree</p>
-                    <ul class="Education-Body">
-                        <li>Faculty : Engineering And Technology</li>
-                        <li>Major : Computer Engineering And Artificial Intelligent </li>
-                        <li>Panyapiwat Institute of Management</li>
-                        <li>TimeLine : 2024 - Present</li>
-                        <li>GPA : 3.95</li>
-                    </ul>
-
-                    <p class="Education-Head">Senior High School</p>
-                    <ul class="Education-Body">
-                        <li>Science-Mathematics Program</li>
-                        <li>Songphinong Witthaya School</li>
-                        <li>TimeLine : 2021 - 2023</li>
-                        <li>GPA : 3.85</li>
-                    </ul>
-
-                </div>
+                <p class="Education-Head">Senior High School</p>
+                <ul class="Education-Body">
+                    <li>Science-Mathematics Program</li>
+                    <li>Songphinong Witthaya School</li>
+                    <li>TimeLine : 2021 - 2023</li>
+                    <li>GPA : 3.85</li>
+                </ul>
 
             </div>
 
-            <hr class="Line">
-
-            <div>
-                <h2 id="skills" class="Skills-Title">SKILLS</h2>
-                <div class="Skills-Section">
-                    <p class="TechnicalSkill">Technical Skill</p>
-                    <ul class="Skills-Body">
-                        <li>Programming Languages: Python, Java, </li>
-                        <li>Web Development: HTML, CSS, Bootstrap 5</li>
-                        <li>Machine Learning: Optimization Algorithms</li>
-                        <li>Database Management: MySQL</li>
-                        <li>Version Control: Git, GitHub</li>
-                </div>
-            </div>
         </div>
+
+        <hr class="Line">
+        <div id="Skills-Section" class="Skills-Section">
+            <h2 id="skills" class="Skills-Title">SKILLS</h2>
+            <p class="ForeignLanguage">Foreign Language</p>
+            <ul class="Skills-Body">
+                <li>English: Basic in listening, speaking, reading and writing,CEFR in Level A2</li>
+            </ul>
+            <p class="TechnicalSkill">Technical Skill</p>
+            <ul class="Skills-Body">
+                <li>Programming Languages: Python, Java, </li>
+                <li>Web Development: HTML, CSS, Bootstrap 5</li>
+                <li>Machine Learning: Optimization Algorithms</li>
+                <li>Database Management: MySQL</li>
+                <li>Version Control: Git, GitHub</li>
+        </div>
+
         <hr class="Line">
 
         <div>
-            <h2 class="Projects-Title">PROJECTS</h2>
-            <div class="Projects-Section">
-                <p class="Project-Head">Machine Learning Optimization</p>
+
+            <div id="Projects-Section" class="Projects-Section">
+                <h2 class="Projects-Title">PROJECTS</h2>
+                <p class="Project-Head">Machine Learning Optimization : House Price Prediction</p>
                 <ul class="Project-Body">
                     <li>Worked on optimizing machine learning algorithms for data forecasting using Python libraries
                         such as NumPy , Pandas and Matplotlib.</li>
@@ -130,8 +144,11 @@
                     <li>Improved model accuracy by tuning hyperparameters with Gradient Descent Algorithm for find
                         minimum error value with learning rate .</li>
                     <li>Result of error rate is 0.00068 with optimization 800 epochs.</li>
+                    <li><a class="Project-Link" href="https://github.com/Kitkhachon-xx/Math_AI_Project.git">View Project
+                            on GitHub</a></li>
                 </ul>
             </div>
+            <hr class="Lines">
     </section>
 
     <footer class="bg-body-tertiary text-center text-lg-start">

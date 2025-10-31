@@ -1,48 +1,62 @@
 body{
     margin: 0;
+    /* nicer default font and page background */
+    font-family: 'Poppins', Arial, Helvetica, sans-serif;
+    background-color: #f3f6f9;
+    color: #1f2937;
+    /* give space for the fixed navbar at top */
+    padding-top: 80px;
 }
 
 
 .IntroducProfile{
-    margin: 50px 0;
+    /* transform the old table-based intro into a centered card using flexbox */
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    max-width: 1200px;
+    margin: 24px auto;
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(31, 41, 55, 0.06);
 }
 
 .profile-IMG-TD{
-    padding-left:10%;
-    width: auto;
-    margin-left:30%;
-
+    /* if table cells remain, make them behave as flex children */
+    flex: 0 0 220px;
+    padding-left: 0;
+    margin-left: 0;
+    text-align: center;
 }
 
 .profile-pic{
-    width: 150px;
-    height: 150px;
+    width: 160px;
+    height: 160px;
     border-radius: 50%;
     object-fit: cover;
-    display: inline;
-
+    display: block;
+    box-shadow: 0 8px 18px rgba(16,24,40,0.08);
 }
 
 .profile-IMG{
     border-radius:50%;
-    width: 200px;
-    height: 200px;
-    
 }
 
 .Intro-Details{
-    padding-left:15% ;
+    flex: 1 1 auto;
+    padding-left: 50px;
     width: 100%;
     vertical-align: top;
-    margin-left:30%;
-    padding-top: 30px;
+    margin-left: 0;
+    padding-top: 0;
 }
 
 .Intro-text{
-    font-size: 20px;
-    color: #333;
-    margin-top: 15px;
-    display: inline;
+    font-size: 18px;
+    color: #334155;
+    margin-top: 8px;
+    display: block;
 }
 
 .ID-Title{
@@ -67,23 +81,33 @@ body{
 }
 
 
-.navbar-brand{
+.navbar-pills{
+    padding: 10px;
     width: 100px;
+    height: auto;
     text-align: center;
+    text-decoration: none;
+    font-size: 20px;
+    color: #000;
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+    box-shadow: 0 6px 18px rgba(255, 226, 36, 0.12);
 }
-.navbar-brand:hover{
-    background-color: rgba(255, 0, 0, 0.903);
+.navbar-pills:hover{
+    transform: translateY(-6px);
+    box-shadow: 0 12px 28px rgb(0, 0, 0);
     border-radius:15%;
     width: 100px;
     text-align: center;
+    color: rgb(255, 255, 255);
+    background-color: #001eff;
+    
 }
 
 .PIMLINK{
     text-decoration: none;
-    color: rgb(0, 0, 0);
-    display: block;
-    width: 43%;
-    margin-bottom: 15px;
+    color: #0f172a;
+    display: inline-block;
+    margin-bottom: 8px;
     font-size: 24px;
 }
 
@@ -98,7 +122,7 @@ body{
     text-decoration: none;
     color: rgb(0, 0, 0);
     display: block;
-    width: 35%;
+    width: 67%;
     margin-bottom: 15px;
     margin-left: 7% ;
     font-size: 18px;
@@ -112,10 +136,21 @@ body{
 
 .Line{
     border: none;
-    height: 2px;
-    background-color: #000;
-    margin-top: 60px;
-    margin-bottom: 60px;
+    height: 1px;
+    background-color: #000000;
+    margin-top: 50px;
+    margin-bottom: 50px;
+    width: 80%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.Lines{
+    border: none;
+    height: 1px;
+    background-color: #ffffff;
+    margin-top: 30px;
+    margin-bottom: 40px;
     width: 100%;
 }
 
@@ -124,15 +159,14 @@ body{
 }
 
 .REBody{
-    font-family: Arial, Helvetica, sans-serif;
+    /* overall content container styles handled by section cards */
 }
 
 .AboutMe-Title {
-    font-size: 30px;
-    color: #000;
-    margin-left: 5%;
-    font:bold;
-    margin-bottom: 20px;
+    font-size: 26px;
+    color: #0f172a;
+    margin: 0 0 12px 0;
+    font-weight: 700;
 }
 .Address{
     font-size: 18px;
@@ -153,9 +187,9 @@ body{
 }
 
 .AboutMe-Body {
-    font-size: 18px;
-    color: #333;
-    margin: 10px 7%;
+    font-size: 16px;
+    color: #334155;
+    margin: 10px 0;
 }
 
 .Email{
@@ -171,23 +205,21 @@ body{
 }
 
 .Education-Title {
-    font-size: 30px;
-    color: #000;
-    margin-left: 5%;
-    font:bold;
-    margin-bottom: 20px;
+    font-size: 26px;
+    color: #0f172a;
+    margin: 0 0 12px 0;
+    font-weight: 700;
 }
 
 .Skills-Title {
-    font-size: 30px;
-    color: #000;
-    margin-left: 5%;
-    font:bold;
-    margin-bottom: 20px;
+    font-size: 26px;
+    color: #0f172a;
+    margin: 0 0 12px 0;
+    font-weight: 700;
 }
 
 .Education-Section {
-    margin-left:7%;
+    margin-left:0;
     height: auto;
     width: auto;
 }
@@ -205,7 +237,7 @@ body{
 }
 
 .Skills-Section {
-    margin-left:7%;
+    margin-left:0;
     height: auto;
     width: auto;
 }
@@ -223,18 +255,17 @@ body{
 }
 
 .Projects-Title {
-    font-size: 30px;
-    color: #000;
-    margin-left: 5%;
-    font:bold;
-    margin-bottom: 20px;
+    font-size: 26px;
+    color: #0f172a;
+    margin: 0 0 12px 0;
+    font-weight: 700;
 }
 
 .Projects-Section {
-    margin-left:7%;
+    margin-left:0;
     height: auto;
     width: auto;
-    margin-bottom: 60px;
+    margin-bottom: 40px;
 }
 
 .Project-Head {
@@ -249,6 +280,33 @@ body{
     width: 100%;
 }
 
+/* section cards used for main blocks */
+.AboutMe-Section,
+.Education-Section,
+.Skills-Section,
+.Projects-Section{
+    max-width: 1500px;
+    margin: 18px auto;
+    background: #ffffff;
+    padding: 18px 22px;
+    border-radius: 12px;
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+    box-shadow: 0 6px 18px rgba(255, 226, 36, 0.12);
+}
+
+.AboutMe-Section:hover,
+.Education-Section:hover,
+.Skills-Section:hover,
+.Projects-Section:hover{
+    transform: translateX(-6px);
+    box-shadow: 0 12px 28px rgba(146, 146, 146, 0.785);
+}
+
+/* navbar tweaks (the nav is inline-styled as fixed) */
+.navbar{
+    box-shadow: 0 6px 18px rgba(2,6,23,0.06);
+}
+
 .Project-Body {
     font-size: 18px;
     color: #333;
@@ -256,10 +314,14 @@ body{
 }
 .nav-link{
     transition: all 0.2s;
-}   
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+    box-shadow: 0 6px 18px rgba(255, 226, 36, 0.12);
+}
 .nav-link:hover{
     /* text-decoration: underline; */
-    border-bottom:4px solid rgb(177, 189, 209) ;
+    border-bottom:4px solid rgb(177, 189, 209);
+    transform: translateY(-6px);
+    box-shadow: 0 12px 28px rgba(0,0,0,0.18);
 }
 
 .ICN{
@@ -267,4 +329,24 @@ body{
     height:25px;
     margin-right:8px;
     vertical-align: middle;
+}
+
+.Project-Link{
+    text-decoration: none;
+    color: rgb(0, 0, 0);
+    display: block;
+    width: 25%;
+    font-size: 18px;
+}
+
+.Project-Link:hover{
+    text-decoration: underline;
+    color: #000cee;
+    font-size: 22px;
+}
+
+.ForeignLanguage{
+    font-size: 24px;
+    color: #000;
+    font:bold;
 }
