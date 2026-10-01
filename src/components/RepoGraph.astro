@@ -1,0 +1,371 @@
+---
+import repos from '../data/repos.json';
+
+const github = 'https://github.com/Kitkhachon-xx';
+const fmt = (iso: string) =>
+  new Date(iso).toLocaleDateString('en', { month: 'short', year: 'numeric' });
+---
+
+<section class="block reveal" id="repos">
+  <h2 class="section-title">Repositories</h2>
+  <p class="repos-hint">
+    <span class="hint-3d">Drag to rotate · scroll to zoom · hover (or tap) a repo for details · click to open</span>
+    <a href={github} target="_blank" rel="noopener">All repos on GitHub →</a>
+  </p>
+
+  <div class="repos" id="repo-graph-root" data-repos={JSON.stringify(repos)} data-github={github}>
+    <div class="repo-stage" id="repo-stage" aria-label="Interactive 3D graph of my GitHub repositories">
+      <div class="repo-card" id="repo-card" hidden></div>
+    </div>
+
+    <ul class="repo-grid">
+      {repos.map((r) => (
+        <li class="card repo-item">
+          {r.thumb && <img src={r.thumb} alt="" loading="lazy" width="1200" height="600" />}
+          <h3><a href={r.url} target="_blank" rel="noopener">{r.name}</a></h3>
+          <p>{r.description ?? 'No description yet'}</p>
+          <p class="repo-meta">{r.language ?? 'n/a'} · ★ {r.stars} · Updated {fmt(r.updated)}</p>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<script>
+  type Repo = {
+    name: string; url: string; homepage: string | null; description: string | null;
+    language: string | null; stars: number; forks: number; topics: string[];
+    updated: string; thumb: string | null;
+  };
+
+  const LANG_COLORS: Record<string, string> = {
+    Python: '#3572A5', 'Jupyter Notebook': '#DA5B0B', Java: '#b07219', HTML: '#e34c26',
+    TypeScript: '#3178c6', Astro: '#ff5a03', JavaScript: '#f1e05a', CSS: '#563d7c',
+  };
+  const langColor = (l: string | null) => (l && LANG_COLORS[l]) || '#8b8fa8';
+
+  const root = document.getElementById('repo-graph-root') as HTMLElement;
+  const stage = document.getElementById('repo-stage') as HTMLElement;
+  const card = document.getElementById('repo-card') as HTMLElement;
+  const section = document.getElementById('repos') as HTMLElement;
+  const repos: Repo[] = JSON.parse(root.dataset.repos || '[]');
+  const githubUrl = root.dataset.github!;
+
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const coarse = matchMedia('(pointer: coarse)').matches;
+
+  function hasWebGL() {
+    try {
+      const c = document.createElement('canvas');
+      return !!(c.getContext('webgl2') || c.getContext('webgl'));
+    } catch { return false; }
+  }
+
+  let started = false;
+  async function start() {
+    if (started || !repos.length || !hasWebGL()) return;
+    started = true;
+    try {
+      const [{ default: ForceGraph3D }, THREE] = await Promise.all([
+        import('3d-force-graph'),
+        import('three'),
+      ]);
+      build(ForceGraph3D, THREE);
+      root.classList.add('is-3d');
+    } catch (e) {
+      console.warn('3D graph unavailable, showing grid', e);
+    }
+  }
+
+  function textureFromCanvas(THREE: any, draw: (ctx: CanvasRenderingContext2D, w: number, h: number) => void, w = 480, h = 240) {
+    const c = document.createElement('canvas');
+    c.width = w; c.height = h;
+    draw(c.getContext('2d')!, w, h);
+    const t = new THREE.CanvasTexture(c);
+    t.colorSpace = THREE.SRGBColorSpace;
+    return t;
+  }
+
+  function fallbackDraw(name: string, color: string) {
+    return (ctx: CanvasRenderingContext2D, w: number, h: number) => {
+      ctx.fillStyle = color; ctx.fillRect(0, 0, w, h);
+      ctx.fillStyle = 'rgba(0,0,0,0.35)'; ctx.fillRect(0, 0, w, h);
+      ctx.fillStyle = '#fff'; ctx.font = 'bold 34px sans-serif';
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText(name.length > 22 ? name.slice(0, 21) + '…' : name, w / 2, h / 2);
+    };
+  }
+
+  function roundedFrame(ctx: CanvasRenderingContext2D, w: number, h: number, color: string) {
+    ctx.strokeStyle = color; ctx.lineWidth = 10;
+    ctx.strokeRect(5, 5, w - 10, h - 10);
+  }
+
+  function build(ForceGraph3D: any, THREE: any) {
+    const nodes: any[] = [{ id: '__me', hub: true, name: 'Kitkhachon-xx' }];
+    const links: any[] = [];
+    for (const r of repos) {
+      nodes.push({ id: r.name, repo: r });
+      links.push({ source: '__me', target: r.name, color: 'rgba(139,143,168,0.35)', width: 0.6 });
+    }
+    const byLang = new Map<string, Repo[]>();
+    for (const r of repos) {
+      if (!r.language) continue;
+      byLang.set(r.language, [...(byLang.get(r.language) || []), r]);
+    }
+    for (const [lang, list] of byLang) {
+      for (let i = 0; i < list.length; i++)
+        for (let j = i + 1; j < list.length; j++)
+          links.push({ source: list[i].name, target: list[j].name, color: langColor(lang), width: 1.4 });
+    }
+
+    const loader = new THREE.TextureLoader();
+    loader.setCrossOrigin('anonymous');
+
+    const makeSprite = (n: any) => {
+      if (n.hub) {
+        const tex = textureFromCanvas(THREE, (ctx, w, h) => {
+          ctx.fillStyle = '#4f46e5'; ctx.beginPath(); ctx.arc(w / 2, h / 2, h / 2 - 4, 0, Math.PI * 2); ctx.fill();
+        }, 256, 256);
+        const mat = new THREE.SpriteMaterial({ map: tex, transparent: true });
+        const sprite = new THREE.Sprite(mat);
+        sprite.scale.set(34, 34, 1);
+        const img = new Image();
+        img.onload = () => {
+          const t = textureFromCanvas(THREE, (ctx, w, h) => {
+            ctx.save(); ctx.beginPath(); ctx.arc(w / 2, h / 2, h / 2 - 10, 0, Math.PI * 2); ctx.clip();
+            ctx.drawImage(img, 0, 0, w, h); ctx.restore();
+            ctx.strokeStyle = '#8b87ff'; ctx.lineWidth = 10;
+            ctx.beginPath(); ctx.arc(w / 2, h / 2, h / 2 - 8, 0, Math.PI * 2); ctx.stroke();
+          }, 256, 256);
+          mat.map = t; mat.needsUpdate = true;
+        };
+        img.src = '/profile.jpg';
+        return sprite;
+      }
+      const color = langColor(n.repo.language);
+      const mat = new THREE.SpriteMaterial({
+        map: textureFromCanvas(THREE, fallbackDraw(n.repo.name, color)),
+        transparent: true,
+      });
+      const sprite = new THREE.Sprite(mat);
+      sprite.scale.set(36, 18, 1);
+      if (n.repo.thumb) {
+        loader.load(n.repo.thumb, (t: any) => {
+          t.colorSpace = THREE.SRGBColorSpace;
+          const c = document.createElement('canvas');
+          c.width = 480; c.height = 240;
+          const ctx = c.getContext('2d')!;
+          ctx.drawImage(t.image, 0, 0, 480, 240);
+          roundedFrame(ctx, 480, 240, color);
+          const framed = new THREE.CanvasTexture(c);
+          framed.colorSpace = THREE.SRGBColorSpace;
+          mat.map = framed; mat.needsUpdate = true;
+        });
+      }
+      return sprite;
+    };
+
+    const graph = ForceGraph3D({ controlType: 'orbit' })(stage)
+      .backgroundColor('rgba(0,0,0,0)')
+      .showNavInfo(false)
+      .graphData({ nodes, links })
+      .nodeThreeObject(makeSprite)
+      .nodeLabel(() => '')
+      .linkColor((l: any) => l.color)
+      .linkWidth((l: any) => l.width)
+      .linkOpacity(0.7)
+      .enableNodeDrag(!reduced)
+      .d3VelocityDecay(0.3);
+
+    graph.d3Force('charge').strength(-260);
+    graph.d3Force('link').distance((l: any) => (l.source.hub || l.target.hub ? 95 : 55));
+
+    if (reduced) {
+      graph.warmupTicks(200).cooldownTicks(0);
+    } else {
+      const controls = graph.controls();
+      controls.autoRotate = true;
+      controls.autoRotateSpeed = 0.7;
+    }
+
+    const size = () => graph.width(stage.clientWidth).height(stage.clientHeight);
+    size();
+    new ResizeObserver(size).observe(stage);
+
+    // Hover card
+    let lastMouse = { x: 0, y: 0 };
+    const place = () => {
+      const pad = 16;
+      const w = card.offsetWidth, h = card.offsetHeight;
+      let x = lastMouse.x + 18, y = lastMouse.y + 18;
+      if (x + w > stage.clientWidth - pad) x = lastMouse.x - w - 18;
+      if (y + h > stage.clientHeight - pad) y = lastMouse.y - h - 18;
+      card.style.transform = `translate(${Math.max(pad, x)}px, ${Math.max(pad, y)}px)`;
+    };
+    stage.addEventListener('pointermove', (e) => {
+      const r = stage.getBoundingClientRect();
+      lastMouse = { x: e.clientX - r.left, y: e.clientY - r.top };
+      if (!card.hidden) place();
+    });
+
+    const el = (tag: string, cls?: string, text?: string) => {
+      const n = document.createElement(tag);
+      if (cls) n.className = cls;
+      if (text !== undefined) n.textContent = text;
+      return n;
+    };
+    const rel = (iso: string) => {
+      const days = Math.round((new Date(iso).getTime() - Date.now()) / 864e5);
+      const f = new Intl.RelativeTimeFormat('en', { numeric: 'auto' });
+      if (Math.abs(days) < 30) return f.format(days, 'day');
+      if (Math.abs(days) < 365) return f.format(Math.round(days / 30), 'month');
+      return f.format(Math.round(days / 365), 'year');
+    };
+
+    const showCard = (n: any) => {
+      card.replaceChildren();
+      if (n.hub) {
+        card.append(el('h4', undefined, 'Kitkhachon-xx'), el('p', 'rc-desc', `${repos.length} public repositories. Click to open my GitHub profile.`));
+      } else {
+        const r: Repo = n.repo;
+        if (r.thumb) {
+          const img = el('img') as HTMLImageElement;
+          img.src = r.thumb; img.alt = ''; img.width = 1200; img.height = 600;
+          card.append(img);
+        }
+        card.append(el('h4', undefined, r.name));
+        card.append(el('p', 'rc-desc', r.description ?? 'No description yet'));
+        const meta = el('p', 'rc-meta');
+        const dot = el('span', 'rc-dot'); dot.style.background = langColor(r.language);
+        meta.append(dot, `${r.language ?? 'n/a'} · ★ ${r.stars} · ⑂ ${r.forks} · Updated ${rel(r.updated)}`);
+        card.append(meta);
+        if (r.topics.length) {
+          const t = el('div', 'rc-topics');
+          r.topics.forEach((x) => t.append(el('span', 'chip', x)));
+          card.append(t);
+        }
+        const links = el('p', 'rc-links');
+        links.append(el('span', undefined, 'Click to open repo'));
+        if (r.homepage) links.append(el('span', undefined, ' · has homepage'));
+        card.append(links);
+      }
+      card.hidden = false;
+      place();
+    };
+
+    const open = (n: any) => {
+      const url = n.hub ? githubUrl : n.repo.url;
+      window.open(url, '_blank', 'noopener');
+    };
+
+    let active: any = null;
+    graph.onNodeHover((n: any) => {
+      stage.style.cursor = n ? 'pointer' : 'grab';
+      if (!reduced) graph.controls().autoRotate = !n;
+      if (coarse) return;
+      active = n;
+      if (n) showCard(n); else card.hidden = true;
+    });
+    graph.onNodeClick((n: any) => {
+      if (coarse && active !== n) {
+        active = n; showCard(n);
+        const p = graph.graph2ScreenCoords(n.x, n.y, n.z);
+        lastMouse = { x: p.x, y: p.y }; place();
+        return;
+      }
+      open(n);
+    });
+    graph.onBackgroundClick(() => { active = null; card.hidden = true; });
+
+    graph.onEngineStop(() => graph.zoomToFit(600, 40));
+    // Frame the whole graph once it settles
+    setTimeout(() => graph.zoomToFit(600, 40), reduced ? 100 : 1800);
+  }
+
+  // Lazy-load the 3D library only when the section is near the viewport
+  if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver((entries) => {
+      if (entries.some((e) => e.isIntersecting)) { io.disconnect(); start(); }
+    }, { rootMargin: '300px' });
+    io.observe(section);
+  } else {
+    start();
+  }
+</script>
+
+<style is:global>
+  .repos-hint {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 8px;
+    color: var(--muted);
+    font-size: 0.9rem;
+    margin: -8px 0 16px;
+  }
+  .repos-hint .hint-3d { display: none; }
+  #repos:has(.is-3d) .hint-3d { display: inline; }
+
+  .repo-stage {
+    display: none;
+    position: relative;
+    height: min(70vh, 640px);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    background:
+      radial-gradient(circle at 50% 40%, var(--accent-soft), transparent 70%),
+      var(--surface);
+    box-shadow: var(--shadow);
+    cursor: grab;
+    touch-action: none;
+  }
+  .repos.is-3d .repo-stage { display: block; }
+  .repos.is-3d .repo-grid { display: none; }
+
+  .repo-card {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 5;
+    width: min(300px, calc(100% - 32px));
+    padding: 12px;
+    border-radius: 12px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+    pointer-events: none;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  .repo-card[hidden] { display: none; }
+  .repo-card img {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    display: block;
+    margin-bottom: 8px;
+  }
+  .repo-card h4 { margin: 0 0 4px; font-size: 1rem; }
+  .repo-card .rc-desc { margin: 0 0 8px; color: var(--muted); }
+  .repo-card .rc-meta { margin: 0 0 8px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+  .repo-card .rc-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+  .repo-card .rc-topics { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
+  .repo-card .chip { font-size: 0.75rem; padding: 1px 8px; }
+  .repo-card .rc-links { margin: 0; color: var(--accent); font-weight: 600; }
+
+  .repo-grid {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 16px;
+  }
+  .repo-item { padding: 12px; }
+  .repo-item img { width: 100%; height: auto; border-radius: 8px; margin-bottom: 8px; }
+  .repo-item h3 { font-size: 1rem; margin: 0 0 4px; word-break: break-word; }
+  .repo-item p { margin: 0 0 6px; color: var(--muted); font-size: 0.9rem; }
+  .repo-item .repo-meta { font-size: 0.8rem; }
+</style>
