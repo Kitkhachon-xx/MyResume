@@ -101,69 +101,155 @@ const fmt = (iso: string) =>
     ctx.strokeRect(5, 5, w - 10, h - 10);
   }
 
-  function build(ForceGraph3D: any, THREE: any) {
-    const nodes: any[] = [{ id: '__me', hub: true, name: 'Kitkhachon-xx' }];
-    const links: any[] = [];
-    for (const r of repos) {
-      nodes.push({ id: r.name, repo: r });
-      links.push({ source: '__me', target: r.name, color: 'rgba(139,143,168,0.35)', width: 0.6 });
-    }
+  type Group = {
+    id: string; label: string; color: string; repos: Repo[]; url: string;
+    radius: number; tilt: [number, number]; speed: number; phase: number;
+  };
+
+  const TILTS: [number, number][] = [[0.35, 0.15], [-0.4, 0.3], [0.2, -0.45], [0.5, 0.1]];
+  const SPEEDS = [0.14, -0.1, 0.08, -0.06];
+
+  function buildGroups(): Group[] {
     const byLang = new Map<string, Repo[]>();
     for (const r of repos) {
       if (!r.language) continue;
       byLang.set(r.language, [...(byLang.get(r.language) || []), r]);
     }
-    for (const [lang, list] of byLang) {
-      for (let i = 0; i < list.length; i++)
-        for (let j = i + 1; j < list.length; j++)
-          links.push({ source: list[i].name, target: list[j].name, color: langColor(lang), width: 1.4 });
+    const multi = [...byLang.entries()].filter(([, l]) => l.length >= 2).sort((a, b) => a[1].length - b[1].length);
+    const multiNames = new Set(multi.map(([n]) => n));
+    const base = multi.map(([lang, list]) => ({
+      label: lang, color: langColor(lang), repos: list,
+      url: `${githubUrl}?tab=repositories&language=${encodeURIComponent(lang)}`,
+    }));
+    const other = repos.filter((r) => !r.language || !multiNames.has(r.language));
+    if (other.length) base.push({ label: 'Other', color: '#8b8fa8', repos: other, url: `${githubUrl}?tab=repositories` });
+    return base.map((g, i) => ({
+      ...g,
+      id: `group:${g.label}`,
+      radius: 85 + i * 50,
+      tilt: TILTS[i % TILTS.length],
+      speed: SPEEDS[i % SPEEDS.length],
+      phase: i * 1.7,
+    }));
+  }
+
+  function build(ForceGraph3D: any, THREE: any) {
+    const groups = buildGroups();
+    const nodes: any[] = [{ id: '__me', kind: 'me', fx: 0, fy: 0, fz: 0, x: 0, y: 0, z: 0 }];
+    const links: any[] = [];
+    for (const g of groups) {
+      nodes.push({ id: g.id, kind: 'hub', group: g, idx: 0 });
+      links.push({ source: '__me', target: g.id, color: g.color, width: 2 });
+      g.repos.forEach((r, i) => {
+        nodes.push({ id: r.name, kind: 'repo', repo: r, group: g, idx: i + 1 });
+        links.push({ source: g.id, target: r.name, color: g.color, width: 1.1 });
+      });
     }
+
+    // Fixed orbit layout: every ring is a tilted circle around you; nodes spin along it.
+    const euler = new THREE.Euler();
+    const pos = (n: any, t: number) => {
+      const g: Group = n.group;
+      const count = g.repos.length + 1;
+      const a = (n.idx / count) * Math.PI * 2 + g.phase + g.speed * t;
+      euler.set(g.tilt[0], 0, g.tilt[1]);
+      return new THREE.Vector3(Math.cos(a) * g.radius, 0, Math.sin(a) * g.radius).applyEuler(euler);
+    };
+    const layout = (t: number) => {
+      for (const n of nodes) {
+        if (n.kind === 'me') continue;
+        const p = pos(n, t);
+        n.fx = n.x = p.x; n.fy = n.y = p.y; n.fz = n.z = p.z;
+      }
+    };
+    layout(0);
 
     const loader = new THREE.TextureLoader();
     loader.setCrossOrigin('anonymous');
 
     const makeSprite = (n: any) => {
-      if (n.hub) {
-        const tex = textureFromCanvas(THREE, (ctx, w, h) => {
-          ctx.fillStyle = '#4f46e5'; ctx.beginPath(); ctx.arc(w / 2, h / 2, h / 2 - 4, 0, Math.PI * 2); ctx.fill();
-        }, 256, 256);
-        const mat = new THREE.SpriteMaterial({ map: tex, transparent: true });
-        const sprite = new THREE.Sprite(mat);
-        sprite.scale.set(34, 34, 1);
+      let sprite: any;
+      if (n.kind === 'me') {
+        const mat = new THREE.SpriteMaterial({
+          map: textureFromCanvas(THREE, (ctx, w, h) => {
+            ctx.fillStyle = '#4f46e5'; ctx.beginPath(); ctx.arc(w / 2, h / 2, h / 2 - 4, 0, Math.PI * 2); ctx.fill();
+          }, 256, 256),
+          transparent: true, depthTest: false,
+        });
+        sprite = new THREE.Sprite(mat);
+        sprite.scale.set(38, 38, 1);
         const img = new Image();
         img.onload = () => {
-          const t = textureFromCanvas(THREE, (ctx, w, h) => {
+          mat.map = textureFromCanvas(THREE, (ctx, w, h) => {
             ctx.save(); ctx.beginPath(); ctx.arc(w / 2, h / 2, h / 2 - 10, 0, Math.PI * 2); ctx.clip();
             ctx.drawImage(img, 0, 0, w, h); ctx.restore();
             ctx.strokeStyle = '#8b87ff'; ctx.lineWidth = 10;
             ctx.beginPath(); ctx.arc(w / 2, h / 2, h / 2 - 8, 0, Math.PI * 2); ctx.stroke();
           }, 256, 256);
-          mat.map = t; mat.needsUpdate = true;
+          mat.needsUpdate = true;
         };
         img.src = '/profile.jpg';
-        return sprite;
-      }
-      const color = langColor(n.repo.language);
-      const mat = new THREE.SpriteMaterial({
-        map: textureFromCanvas(THREE, fallbackDraw(n.repo.name, color)),
-        transparent: true,
-      });
-      const sprite = new THREE.Sprite(mat);
-      sprite.scale.set(36, 18, 1);
-      if (n.repo.thumb) {
-        loader.load(n.repo.thumb, (t: any) => {
-          t.colorSpace = THREE.SRGBColorSpace;
-          const c = document.createElement('canvas');
-          c.width = 480; c.height = 240;
-          const ctx = c.getContext('2d')!;
-          ctx.drawImage(t.image, 0, 0, 480, 240);
-          roundedFrame(ctx, 480, 240, color);
-          const framed = new THREE.CanvasTexture(c);
-          framed.colorSpace = THREE.SRGBColorSpace;
-          mat.map = framed; mat.needsUpdate = true;
+      } else if (n.kind === 'hub') {
+        const g: Group = n.group;
+        const mat = new THREE.SpriteMaterial({
+          map: textureFromCanvas(THREE, (ctx, w, h) => {
+            ctx.fillStyle = g.color; ctx.beginPath(); ctx.arc(w / 2, h / 2, h / 2 - 6, 0, Math.PI * 2); ctx.fill();
+            ctx.strokeStyle = 'rgba(255,255,255,0.85)'; ctx.lineWidth = 8; ctx.stroke();
+            ctx.fillStyle = '#fff'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+            const words = g.label.split(' ');
+            ctx.font = `bold ${words.length > 1 ? 34 : 40}px sans-serif`;
+            words.forEach((wd, i) => ctx.fillText(wd, w / 2, h / 2 - 14 + i * 40 - (words.length - 1) * 10));
+            ctx.font = '28px sans-serif';
+            ctx.fillText(`${g.repos.length} repos`, w / 2, h / 2 + 52);
+          }, 256, 256),
+          transparent: true, depthTest: false,
         });
+        sprite = new THREE.Sprite(mat);
+        sprite.scale.set(34, 34, 1);
+      } else {
+        const color = langColor(n.repo.language);
+        const mat = new THREE.SpriteMaterial({
+          map: textureFromCanvas(THREE, fallbackDraw(n.repo.name, color)),
+          transparent: true, depthTest: false,
+        });
+        sprite = new THREE.Sprite(mat);
+        sprite.scale.set(52, 26, 1);
+        if (n.repo.thumb) {
+          loader.load(n.repo.thumb, (t: any) => {
+            const c = document.createElement('canvas');
+            c.width = 480; c.height = 240;
+            const ctx = c.getContext('2d')!;
+            ctx.drawImage(t.image, 0, 0, 480, 240);
+            roundedFrame(ctx, 480, 240, color);
+            const framed = new THREE.CanvasTexture(c);
+            framed.colorSpace = THREE.SRGBColorSpace;
+            mat.map = framed; mat.needsUpdate = true;
+          });
+        }
       }
+      sprite.renderOrder = 10;
+      n.__sprite = sprite;
+      n.__vis = 1;
       return sprite;
+    };
+
+    // Focus: hovered node + its hub/children stay bright, the rest fades.
+    let focus: Set<string> | null = null;
+    const endId = (e: any) => (typeof e === 'object' ? e.id : e);
+    const inFocus = (l: any) => !focus || (focus.has(endId(l.source)) && focus.has(endId(l.target)));
+    const refreshLinks = () => {
+      graph.linkColor((l: any) => (inFocus(l) ? l.color : '#7b7f99'));
+      graph.linkWidth((l: any) => (inFocus(l) ? l.width : 0.15));
+    };
+    const setFocus = (n: any) => {
+      if (!n || n.kind === 'me') focus = null;
+      else {
+        const s = new Set<string>(['__me']);
+        if (n.kind === 'hub') { s.add(n.id); n.group.repos.forEach((r: Repo) => s.add(r.name)); }
+        else { s.add(n.id); s.add(n.group.id); }
+        focus = s;
+      }
+      refreshLinks();
     };
 
     const graph = ForceGraph3D({ controlType: 'orbit' })(stage)
@@ -172,26 +258,74 @@ const fmt = (iso: string) =>
       .graphData({ nodes, links })
       .nodeThreeObject(makeSprite)
       .nodeLabel(() => '')
-      .linkColor((l: any) => l.color)
-      .linkWidth((l: any) => l.width)
-      .linkOpacity(0.7)
-      .enableNodeDrag(!reduced)
-      .d3VelocityDecay(0.3);
+      .linkOpacity(0.75)
+      .enableNodeDrag(false)
+      .d3AlphaDecay(0)
+      .cooldownTime(Infinity)
+      .cooldownTicks(reduced ? 3 : Infinity);
+    refreshLinks();
+    // 3d-force-graph empties its container on init, so re-attach the hover card.
+    stage.appendChild(card);
+    // Positions are fixed, so no physics.
+    graph.d3Force('charge', null);
+    graph.d3Force('link', null);
+    graph.d3Force('center', null);
 
-    graph.d3Force('charge').strength(-260);
-    graph.d3Force('link').distance((l: any) => (l.source.hub || l.target.hub ? 95 : 55));
-
-    if (reduced) {
-      graph.warmupTicks(200).cooldownTicks(0);
-    } else {
-      const controls = graph.controls();
-      controls.autoRotate = true;
-      controls.autoRotateSpeed = 0.7;
+    // Faint orbit rings
+    for (const g of groups) {
+      const pts: any[] = [];
+      for (let i = 0; i <= 128; i++) {
+        const a = (i / 128) * Math.PI * 2;
+        pts.push(new THREE.Vector3(Math.cos(a) * g.radius, 0, Math.sin(a) * g.radius));
+      }
+      const ring = new THREE.Line(
+        new THREE.BufferGeometry().setFromPoints(pts),
+        new THREE.LineBasicMaterial({ color: g.color, transparent: true, opacity: 0.35 }),
+      );
+      ring.rotation.set(g.tilt[0], 0, g.tilt[1]);
+      graph.scene().add(ring);
     }
 
-    const size = () => graph.width(stage.clientWidth).height(stage.clientHeight);
+    const camera = graph.camera();
+    const frame = () => {
+      const aspect = stage.clientWidth / Math.max(1, stage.clientHeight);
+      const maxR = groups[groups.length - 1].radius + 30;
+      const d = Math.max(430, (maxR * 1.1) / (Math.tan((camera.fov * Math.PI) / 360) * Math.min(1.6, aspect)));
+      graph.cameraPosition({ x: 0, y: d * 0.34, z: d * 0.94 }, { x: 0, y: 0, z: 0 }, 0);
+    };
+    const size = () => { graph.width(stage.clientWidth).height(stage.clientHeight); frame(); };
     size();
     new ResizeObserver(size).observe(stage);
+
+    let hovering = false;
+    if (!reduced) {
+      const controls = graph.controls();
+      controls.autoRotate = true;
+      controls.autoRotateSpeed = 0.6;
+    }
+
+    // Per-frame: spin rings, fade by distance, dim unfocused nodes
+    let last = performance.now(), tt = 0;
+    const tick = (now: number) => {
+      const dt = Math.min(0.1, (now - last) / 1000);
+      last = now;
+      if (!reduced && !hovering) tt += dt;
+      if (!reduced) layout(tt);
+      for (const n of nodes) {
+        const s = n.__sprite;
+        if (!s) continue;
+        const dist = camera.position.distanceTo(s.position);
+        const fade = Math.min(1, Math.max(0.5, 1.2 - (dist - 300) / 500));
+        const target = !focus || n.kind === 'me' || focus.has(n.id) ? 1 : 0.18;
+        n.__vis += (target - n.__vis) * 0.2;
+        s.material.opacity = fade * n.__vis;
+      }
+      requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+
+    (stage as any).__graph = graph;
+    (stage as any).__nodes = nodes;
 
     // Hover card
     let lastMouse = { x: 0, y: 0 };
@@ -225,8 +359,12 @@ const fmt = (iso: string) =>
 
     const showCard = (n: any) => {
       card.replaceChildren();
-      if (n.hub) {
+      if (n.kind === 'me') {
         card.append(el('h4', undefined, 'Kitkhachon-xx'), el('p', 'rc-desc', `${repos.length} public repositories. Click to open my GitHub profile.`));
+      } else if (n.kind === 'hub') {
+        const g: Group = n.group;
+        card.append(el('h4', undefined, g.label), el('p', 'rc-desc', `${g.repos.length} repositories: ${g.repos.map((r) => r.name).join(', ')}`));
+        card.append(el('p', 'rc-links', 'Click to view on GitHub'));
       } else {
         const r: Repo = n.repo;
         if (r.thumb) {
@@ -255,32 +393,30 @@ const fmt = (iso: string) =>
     };
 
     const open = (n: any) => {
-      const url = n.hub ? githubUrl : n.repo.url;
+      const url = n.kind === 'me' ? githubUrl : n.kind === 'hub' ? n.group.url : n.repo.url;
       window.open(url, '_blank', 'noopener');
     };
 
     let active: any = null;
     graph.onNodeHover((n: any) => {
       stage.style.cursor = n ? 'pointer' : 'grab';
+      hovering = !!n;
       if (!reduced) graph.controls().autoRotate = !n;
       if (coarse) return;
       active = n;
+      setFocus(n);
       if (n) showCard(n); else card.hidden = true;
     });
     graph.onNodeClick((n: any) => {
       if (coarse && active !== n) {
-        active = n; showCard(n);
+        active = n; setFocus(n); showCard(n);
         const p = graph.graph2ScreenCoords(n.x, n.y, n.z);
         lastMouse = { x: p.x, y: p.y }; place();
         return;
       }
       open(n);
     });
-    graph.onBackgroundClick(() => { active = null; card.hidden = true; });
-
-    graph.onEngineStop(() => graph.zoomToFit(600, 40));
-    // Frame the whole graph once it settles
-    setTimeout(() => graph.zoomToFit(600, 40), reduced ? 100 : 1800);
+    graph.onBackgroundClick(() => { active = null; setFocus(null); card.hidden = true; });
   }
 
   // Lazy-load the 3D library only when the section is near the viewport
